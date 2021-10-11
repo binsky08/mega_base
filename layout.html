@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="layout.css">
 <script defer src="layout.js"></script>
+<script defer src="app.js"></script>
 
 <div class="app-tabs">
     <nav>
@@ -7,22 +8,17 @@
     </nav>
     <div class="app-tabs__container">
         <div id="content_games">
-            games content
+            <input type="text" id="game_name">
+            <input type="date" id="game_date">
+            <button id="add_games_button">add</button>
         </div>
         <div id="content_player" class="display-none">
-            player content
+            <input type="text" id="add_player">
+            <button id="add_player_button">add</button>
         </div>
         <div id="content_category" class="display-none">
-            category <br>
-            category <br>
-            category <br>
-            category <br>
-            category <br>
-            category <br>
-            category <br>
-            category <br>
             <input type="text" id="add_category">
-            <button>add</button>
+            <button id="add_category_button">add</button>
         </div>
     </div>
 </div>
