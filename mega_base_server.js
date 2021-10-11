@@ -21,6 +21,16 @@ connection.connect(function (err) {
     if (err) throw err;
 });
 
+const failResponse = function (statusCode, message) {
+    res.status(statusCode);
+    res.message(message)
+    res.type('application/json');
+    res.send({
+        error: message
+    })
+    res.send();
+};
+
 const fetchResource = function (resource, res) {
     writeHead(res, 200, "application/json");
     let table = databaseConnector.getTableName(resource);
@@ -40,10 +50,7 @@ const fetchResource = function (resource, res) {
  */
 const updateContent = function (resource, res, data) {
     if (data === undefined || data[Main_Identifier] === undefined) {
-        // TODO create 404 page
-        console.log('not found')
-        res.writeHead(404, "NotFound");
-        res.send()
+        failResponse(404, 'not found');
         return;
     }
 
@@ -81,10 +88,7 @@ const updateContent = function (resource, res, data) {
 
 function deleteContent(resourceType, response, data) {
     if (data === undefined || data[Main_Identifier] === undefined) {
-        // TODO create 404 page
-        console.log('not found')
-        response.writeHead(404, "NotFound");
-        response.send()
+        failResponse(404, 'not found');
         return;
     }
 
