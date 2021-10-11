@@ -120,6 +120,24 @@ const updateContent = function (resource, res, data) {
     }
 }
 
+function deleteContent(resourceType, response, data) {
+    if (data === undefined || data[Main_Identifier] === undefined) {
+        // TODO create 404 page
+        console.log('not found')
+        response.writeHead(404, "NotFound");
+        response.send()
+        return;
+    }
+
+    writeHead(response, 200, "application/json");
+    let table = getTableName(response);
+    getQueryResult("DELETE FROM " + table + " " +
+        " WHERE id = ?;", [data[Main_Identifier]], (data) => {
+        response.send(JSON.stringify(data));
+        response.end();
+    }, connection);
+}
+
 app.get('/data/:resourceType/', function (req, res) {
     fetchResource(req.params.resourceType, res);
 })
@@ -127,6 +145,10 @@ app.use(formidable());
 
 app.post('/data/:resourceType/', function (req, res) {
     updateContent(req.params.resourceType, res, req.fields);
+})
+
+app.delete('/data/:resourceType/', function (req, res) {
+    deleteContent(req.params.resourceType, res, req.fields);
 })
 
 app.use(express.static('public'));
