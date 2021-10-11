@@ -56,7 +56,7 @@ const updateContent = function (resource, res, data) {
 
     writeHead(res, 200, "application/json");
     let table = databaseConnector.getTableName(resource);
-    let columns = databaseConnector.getColumns(table);
+    let columns = databaseConnector.getColumns(table, Main_Identifier);
     let updateColumns = [];
     let idValue = data[Main_Identifier];
     let updateValues = [];
@@ -90,14 +90,8 @@ const updateContent = function (resource, res, data) {
 }
 
 function createContent(resourceType, res, fields) {
-    if (fields === undefined || fields[Main_Identifier] === undefined) {
-        failResponse(404, 'not found', res);
-        return;
-    }
-
-    writeHead(res, 200, "application/json");
-    let table = databaseConnector.getTableName(resource);
-    let columns = databaseConnector.getColumns(table);
+    let table = databaseConnector.getTableName(resourceType);
+    let columns = databaseConnector.getColumns(table, Main_Identifier);
     columns.shift(); // remove auto-Generated id
 
     let insetValues = [];
@@ -109,15 +103,17 @@ function createContent(resourceType, res, fields) {
         }
 
         if (fields[column] === undefined) {
-            failResponse(406, 'Field "' + column + '" isn\'t set')
+            failResponse(406, 'Field "' + column + '" isn\'t set', res)
             return
         }
         insetValues.push(fields[column]);
     }
     delete fields[Main_Identifier];
 
-    getQueryResult("INSERT INTO " + table + " (" + columns.join(',') + ")" +
-        "VALUES (" + insetValues.join(', ') + ") ", insetValues, (data) => {
+    let insertPlaceHolders = Array(insetValues.length).fill('?');
+    let sql = "INSERT INTO " + table + " (" + columns.join(',') + ")" +
+        "VALUES (" + insertPlaceHolders.join(',') + ") "
+    getQueryResult(sql, insetValues, (data) => {
         if (data.affectedRows === 0) {
             failResponse(410, "No Dataset modified, maybe already deleted", res);
         } else {

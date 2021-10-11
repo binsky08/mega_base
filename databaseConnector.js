@@ -11,12 +11,12 @@ function getDatabaseConfig() {
     return config.database
 }
 
-function getColumns(table) {
+function getColumns(table, mainID) {
     switch (table) {
         case 'player':
-            return [Main_Identifier, 'email', 'first_name', 'last_name', 'nickname', 'password_plain', 'date_of_birth'];
+            return [mainID, 'email', 'first_name', 'last_name', 'nickname', 'password_plain', 'date_of_birth'];
         case 'game':
-            return [Main_Identifier, 'name', 'release_date']
+            return [mainID, 'name', 'release_date']
     }
 }
 
