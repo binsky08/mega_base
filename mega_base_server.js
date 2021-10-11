@@ -1,8 +1,3 @@
-const http = require('http');
-const url = require('url');
-const fs = require('fs');
-const mime = require('mime');
-const mariadb = require('mariadb');
 const mariadb_callback = require('mariadb/callback');
 const connection = mariadb_callback.createConnection({
     host: 'localhost',
@@ -18,8 +13,6 @@ const connection = mariadb_callback.createConnection({
 const express = require('express')
 const app = express()
 const formidable = require('express-formidable');
-const bodyParser = require("body-parser");
-;
 
 function getTableName(resource) {
     let table;
@@ -58,7 +51,7 @@ function getColumns(table) {
 }
 
 /**
- * updates the correspondig Table
+ * updates the corresponding Table
  * @param resource Tablename
  * @param res
  * @param data
@@ -73,7 +66,6 @@ const updateContent = function (resource, res, data) {
     }
 
     writeHead(res, 200, "application/json");
-    let selectColumns = '*';
     let table = getTableName(resource);
     let columns = getColumns(table);
     let updateColumns = [];
@@ -96,15 +88,13 @@ const updateContent = function (resource, res, data) {
     updateValues.push(idValue);
 
     if (updateColumns.length > 0) {
-        getQueryResult("Update " + table + " " +
+        getQueryResult("UPDATE " + table + " " +
             "SET " + updateColumns.join(', ') + " " +
             "WHERE id = ?;", updateValues, (data) => {
             res.send(JSON.stringify(data));
             res.end();
         }, connection);
     }
-
-
 }
 
 app.get('/:resourceType/', function (req, res) {
@@ -116,16 +106,12 @@ app.post('/:resourceType/', function (req, res) {
     updateContent(req.params.resourceType, res, req.fields);
 })
 
-app.listen(8080);
 app.use(express.static('public'));
+app.listen(8080);
 
 function writeHead(res, statusCode, contentType) {
     res.setHeader('Content-Type', contentType !== undefined ? contentType : 'text/plain');
     res.setHeader('Access-Control-Allow-Origin', '*');
-}
-
-function exists(val) {
-    return val !== undefined;
 }
 
 function getQueryResult(sql, params, callback, connection) {
