@@ -18,6 +18,9 @@ function refreshList(type) {
             const child = document.createElement('li');
             const nameElement = document.createElement('span');
             nameElement.innerText = listElement.name;
+            if (type === 'game') {
+                nameElement.innerText += ' - Release date: ' + listElement.release_date.slice(0, 10);
+            }
             child.appendChild(nameElement);
 
             const editButton = document.createElement("button");
@@ -40,7 +43,13 @@ function refreshList(type) {
                         'Content-Type': 'application/json'
                     }
                 };
-                fetch(prefix + '/' + type, options);
+                fetch(prefix + '/' + type, options).then((res) => {
+                    if (res.status === 200) {
+                        refreshList('game');
+                    } else {
+                        alert(res.statusMessage);
+                    }
+                });
             });
 
             child.appendChild(editButton);
@@ -84,7 +93,7 @@ function addGame() {
 
     fetch(prefix + '/game', options)
         .then(function (res) {
-            if (res.statusCode === 200) {
+            if (res.status === 200) {
                 refreshList('game');
                 gameName.value = '';
                 gameDate.value = '';
@@ -101,7 +110,7 @@ function editGame(gameListElement) {
     const game = {
         id: gameListElement.id,
         name: editGameName.value,
-        release_date: editGameDate.value
+        release_date: new Date(editGameDate.value).toISOString().slice(0, 19).replace('T', ' ')
     };
 
     const options = {
@@ -114,7 +123,7 @@ function editGame(gameListElement) {
 
     fetch(prefix + '/game', options)
         .then(function (res) {
-            if (res.statusCode === 200) {
+            if (res.status === 200) {
                 refreshList('game');
                 editGameName.value = '';
                 editGameDate.value = '';

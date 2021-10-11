@@ -150,7 +150,7 @@ app.get('/data/:resourceType/', function (req, res) {
 app.use(express.json());
 
 app.post('/data/:resourceType/', function (req, res) {
-    createContent(req.params.resourceType, res, req.fields);
+    createContent(req.params.resourceType, res, req.body);
 })
 
 app.patch('/data/:resourceType/', function (req, res) {
