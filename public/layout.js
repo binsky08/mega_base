@@ -19,7 +19,6 @@ initialize();
 
 function changeTab(tabName) {
     for (const tabNameElement of tabNames) {
-        console.log(tabNameElement);
         document.getElementById('tab_' + tabNameElement).classList.remove('active');
         document.getElementById('content_' + tabNameElement).classList.add('display-none');
     }

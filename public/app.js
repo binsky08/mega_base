@@ -17,10 +17,20 @@ function refreshList(type) {
         for (const listElement of jsonData) {
             const child = document.createElement('li');
             const nameElement = document.createElement('span');
-            nameElement.innerText = listElement.name;
-            if (type === 'game') {
-                nameElement.innerText += ' - Release date: ' + listElement.release_date.slice(0, 10);
+
+            switch (type) {
+                case 'game':
+                    nameElement.innerText = listElement.name;
+                    nameElement.innerText += ' - Release date: ' + listElement.release_date.slice(0, 10);
+                    break;
+                case 'player':
+                    nameElement.innerText = listElement.first_name + ' ' + listElement.last_name;
+                    break;
+                case 'category':
+                    nameElement.innerText = listElement.name;
+                    break;
             }
+
             child.appendChild(nameElement);
 
             const editButton = document.createElement("button");
@@ -60,7 +70,12 @@ function refreshList(type) {
 }
 
 refreshList('game');
-document.getElementById("add_game_button").addEventListener("click", addGame);
+refreshList('player');
+refreshList('category');
+
+document.getElementById("add_game_button").addEventListener("click", () => add('game'));
+document.getElementById("add_player_button").addEventListener("click", () => add('player'));
+document.getElementById("add_category_button").addEventListener("click", () => add('category'));
 
 function loadToEdit(type, listElement) {
     const clone = document.getElementById("edit_" + type + "_button").cloneNode(true);
@@ -74,29 +89,35 @@ function loadToEdit(type, listElement) {
     }
 }
 
-function addGame() {
-    const gameName = document.getElementById("add_game_name");
-    const gameDate = document.getElementById("add_game_date");
+function add(type) {
+    const obj = {};
 
-    const game = {
-        name: gameName.value,
-        release_date: gameDate.value
-    };
+    switch (type) {
+        case 'game':
+            obj.name = document.getElementById("add_" + type + "_name").value;
+            obj.release_date = document.getElementById("add_" + type + "_date").value;
+            break;
+    }
 
     const options = {
         method: 'POST',
-        body: JSON.stringify(game),
+        body: JSON.stringify(obj),
         headers: {
             'Content-Type': 'application/json'
         }
     };
 
-    fetch(prefix + '/game', options)
+    fetch(prefix + '/' + type, options)
         .then(function (res) {
             if (res.status === 200) {
-                refreshList('game');
-                gameName.value = '';
-                gameDate.value = '';
+                refreshList(type);
+
+                switch (type) {
+                    case 'game':
+                        document.getElementById("add_" + type + "_name").value = '';
+                        document.getElementById("add_" + type + "_date").value = '';
+                        break;
+                }
             } else {
                 alert(res.statusMessage);
             }
