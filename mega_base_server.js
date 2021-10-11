@@ -3,7 +3,6 @@ const mariadb_callback = require('mariadb/callback');
 const express = require('express')
 const app = express()
 const databaseConnector = require('./databaseConnector')
-const formidable = require('express-formidable');
 
 const Main_Identifier = 'id';
 
@@ -116,14 +115,14 @@ function deleteContent(resourceType, response, data) {
 app.get('/data/:resourceType/', function (req, res) {
     fetchResource(req.params.resourceType, res);
 })
-app.use(formidable());
+app.use(express.json());
 
 app.patch('/data/:resourceType/', function (req, res) {
-    updateContent(req.params.resourceType, res, req.fields);
+    updateContent(req.params.resourceType, res, req.body);
 })
 
 app.delete('/data/:resourceType/', function (req, res) {
-    deleteContent(req.params.resourceType, res, req.fields);
+    deleteContent(req.params.resourceType, res, req.body);
 })
 
 app.use(express.static('public'));
