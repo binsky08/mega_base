@@ -1,8 +1,12 @@
 const fs = require("fs");
 
-function getDatabaseConfig() {
+function getConfiguration() {
     let configContent = fs.readFileSync('config/environment.config.json');
-    let config = JSON.parse(configContent);
+    return JSON.parse(configContent);
+}
+
+function getDatabaseConfig() {
+    let config = getConfiguration();
 
     return config.database
 }
@@ -48,4 +52,4 @@ function getTableName(resource) {
     return table;
 }
 
-module.exports = { getDatabaseConfig, getColumns, getTableName };
+module.exports = { getDatabaseConfig, getColumns, getTableName, getConfiguration };

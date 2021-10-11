@@ -7,11 +7,12 @@ const formidable = require('express-formidable');
 
 const Main_Identifier = 'id';
 
+let config = databaseConnector.getConfiguration();
 let databaseConfig = databaseConnector.getDatabaseConfig();
 
 const connection = mariadb_callback.createConnection({
     host: databaseConfig.host,
-    ssl: false,
+    ssl: databaseConfig.ssl,
     port: databaseConfig.port,
     user: databaseConfig.username,
     password: databaseConfig.password,
@@ -126,7 +127,7 @@ app.delete('/data/:resourceType/', function (req, res) {
 })
 
 app.use(express.static('public'));
-app.listen(8080);
+app.listen(config.applicationPort);
 
 function writeHead(res, statusCode, contentType) {
     res.setHeader('Content-Type', contentType !== undefined ? contentType : 'text/plain');
