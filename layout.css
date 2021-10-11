@@ -1,0 +1,48 @@
+ul.horizontal_menu li {
+    display: inline;
+    list-style-type: none;
+    margin: 5px;
+    padding: 2px;
+}
+
+.app-tabs {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1 1 100%;
+    z-index: 51;
+    background: #ececec;
+    list-style-type: none;
+}
+
+.app-tabs__tab {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    padding: 10px 10px 10px 10px;
+    transition: color 100ms, opacity 100ms, border-color 100ms;
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    opacity: .6;
+    color: dimgrey;
+    border-bottom: 1px solid black;
+    width: 50px;
+    list-style-type: none;
+    cursor: pointer;
+}
+
+.app-tabs__tab.active {
+    opacity: 1;
+}
+
+.app-tabs__container div {
+    margin: 5px;
+    border: #a8a8a8 solid 1px;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.display-none {
+    display: none;
+}
