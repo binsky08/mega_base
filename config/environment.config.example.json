@@ -4,6 +4,8 @@
         "port": 3306,
         "database": "mega_base",
         "username": "dummy",
-        "password": "secret"
-    }
+        "password": "secret",
+        "ssl": false
+    },
+    "applicationPort": 8080
 }
