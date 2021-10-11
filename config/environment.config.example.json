@@ -1,0 +1,9 @@
+{
+    "database": {
+        "host": "localhost",
+        "port": 3306,
+        "database": "mega_base",
+        "username": "dummy",
+        "password": "secret"
+    }
+}

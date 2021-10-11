@@ -1,18 +1,23 @@
 const mariadb_callback = require('mariadb/callback');
-const connection = mariadb_callback.createConnection({
-    host: 'localhost',
-    ssl: {
-        rejectUnauthorized: false
-    },
-    port: 3306,
-    user: 'root',
-    password: '1234',
-    database: 'mega_base'
-});
 
 const express = require('express')
 const app = express()
+const databaseConnector = require('./databaseConnector')
 const formidable = require('express-formidable');
+
+let databaseConfig = databaseConnector.getDatabaseConfig();
+
+const connection = mariadb_callback.createConnection({
+    host: databaseConfig.host,
+    ssl: false,
+    port: databaseConfig.port,
+    user: databaseConfig.username,
+    password: databaseConfig.password,
+    database: databaseConfig.database
+});
+connection.connect(function (err) {
+    if (err) throw err;
+})
 
 function getTableName(resource) {
     let table;
