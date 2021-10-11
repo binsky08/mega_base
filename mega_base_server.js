@@ -80,9 +80,21 @@ const updateContent = function (resource, res, data) {
         getQueryResult("UPDATE " + table + " " +
             "SET " + updateColumns.join(', ') + " " +
             "WHERE id = ?;", updateValues, (data) => {
-            res.send(JSON.stringify(data));
-            res.end();
+            if (data.affectedRows === 0) {
+                failResponse(410, "No Dataset modified, maybe already deleted")
+            } else {
+                modificationResponse(data, res);
+            }
         }, connection);
+    }
+}
+
+function modificationResponse(data, response) {
+    if (data.affectedRows === 0) {
+        failResponse(410, "No Dataset modified, maybe already deleted")
+    } else {
+        response.send(JSON.stringify(data));
+        response.end();
     }
 }
 
@@ -96,8 +108,7 @@ function deleteContent(resourceType, response, data) {
     let table = databaseConnector.getTableName(response);
     getQueryResult("DELETE FROM " + table + " " +
         " WHERE id = ?;", [data[Main_Identifier]], (data) => {
-        response.send(JSON.stringify(data));
-        response.end();
+        modificationResponse(data, response);
     }, connection);
 }
 
