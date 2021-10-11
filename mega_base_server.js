@@ -22,6 +22,24 @@ connection.connect(function (err) {
 function getTableName(resource) {
     let table;
     switch (resource) {
+        case 'category':
+            table = 'category';
+            break;
+        case 'friends':
+            table = 'friends';
+            break;
+        case 'link_game_category':
+            table = 'link_game_category'
+            break;
+        case 'link_game_rating_agency':
+            table = 'link_game_rating_agency'
+            break;
+        case 'link_player_game':
+            table = 'link_player_game'
+            break;
+        case 'rating_agency':
+            table = 'rating_agency'
+            break;
         case 'player':
             table = 'player';
             break;
@@ -107,7 +125,7 @@ app.get('/:resourceType/', function (req, res) {
 })
 app.use(formidable());
 
-app.post('/:resourceType/', function (req, res) {
+app.post('/data/:resourceType/', function (req, res) {
     updateContent(req.params.resourceType, res, req.fields);
 })
 
