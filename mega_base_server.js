@@ -21,14 +21,14 @@ connection.connect(function (err) {
     if (err) throw err;
 });
 
-const failResponse = function (statusCode, message) {
-    res.status(statusCode);
-    res.message(message)
-    res.type('application/json');
-    res.send({
+const failResponse = function (statusCode, message, response) {
+    response.status(statusCode);
+    response.message(message)
+    response.type('application/json');
+    response.send({
         error: message
     })
-    res.send();
+    response.send();
 };
 
 const fetchResource = function (resource, res) {
@@ -50,7 +50,7 @@ const fetchResource = function (resource, res) {
  */
 const updateContent = function (resource, res, data) {
     if (data === undefined || data[Main_Identifier] === undefined) {
-        failResponse(404, 'not found');
+        failResponse(404, 'not found', res);
         return;
     }
 
@@ -81,7 +81,7 @@ const updateContent = function (resource, res, data) {
             "SET " + updateColumns.join(', ') + " " +
             "WHERE id = ?;", updateValues, (data) => {
             if (data.affectedRows === 0) {
-                failResponse(410, "No Dataset modified, maybe already deleted")
+                failResponse(410, "No Dataset modified, maybe already deleted", res);
             } else {
                 modificationResponse(data, res);
             }
@@ -91,7 +91,7 @@ const updateContent = function (resource, res, data) {
 
 function modificationResponse(data, response) {
     if (data.affectedRows === 0) {
-        failResponse(410, "No Dataset modified, maybe already deleted")
+        failResponse(410, "No Dataset modified, maybe already deleted", response)
     } else {
         response.send(JSON.stringify(data));
         response.end();
@@ -100,7 +100,7 @@ function modificationResponse(data, response) {
 
 function deleteContent(resourceType, response, data) {
     if (data === undefined || data[Main_Identifier] === undefined) {
-        failResponse(404, 'not found');
+        failResponse(404, 'not found', response);
         return;
     }
 
