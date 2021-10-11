@@ -1,0 +1,15 @@
+{
+  "name": "mega_base_project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mega_base_cli_demo.js",
+  "scripts": {
+    "demo": "node mega_base_cli_demo.js",
+    "server": "node mega_base_server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "mariadb": "^2.5.4"
+  }
+}
