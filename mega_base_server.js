@@ -76,24 +76,29 @@ const updateContent = function (resource, res, data) {
     let selectColumns = '*';
     let table = getTableName(resource);
     let columns = getColumns(table);
-    let updates = [];
+    let updateColumns = [];
+    let idValue = data[Main_Identifier];
+    let updateValues = [];
 
-    for (let column in columns) {
+    for (let column of columns) {
         // skip id, cause it's used for identification
-        if (column === Main_Identifier)
+        if (column === Main_Identifier) {
             continue;
+        }
 
         if (data[column] !== undefined) {
-            updates.push(column + ' = ?');
+            updateColumns.push(column + ' = ?');
+            updateValues.push(data[column]);
         }
     }
+    delete data[Main_Identifier];
 
-    updates.push(data[Main_Identifier])
+    updateValues.push(idValue);
 
-    if (updates.length > 0) {
+    if (updateColumns.length > 0) {
         getQueryResult("Update " + table + " " +
-            "SET " + updates.join(', ') + "" +
-            "WHERE id = ?;", data, (data) => {
+            "SET " + updateColumns.join(', ') + " " +
+            "WHERE id = ?;", updateValues, (data) => {
             res.send(JSON.stringify(data));
             res.end();
         }, connection);
@@ -105,9 +110,10 @@ const updateContent = function (resource, res, data) {
 app.get('/:resourceType/', function (req, res) {
     fetchResource(req.params.resourceType, res);
 })
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(formidable());
+
 app.post('/:resourceType/', function (req, res) {
-    updateContent(req.params.resourceType, res, req.body);
+    updateContent(req.params.resourceType, res, req.fields);
 })
 
 app.listen(8080);
