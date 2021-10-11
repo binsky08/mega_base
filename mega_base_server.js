@@ -120,7 +120,7 @@ const updateContent = function (resource, res, data) {
     }
 }
 
-app.get('/:resourceType/', function (req, res) {
+app.get('/data/:resourceType/', function (req, res) {
     fetchResource(req.params.resourceType, res);
 })
 app.use(formidable());
