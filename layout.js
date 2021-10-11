@@ -1,5 +1,4 @@
-const tabNames = ['games', 'player'];
-let activeTab = 'games';
+const tabNames = ['games', 'player','category'];
 
 function initialize() {
     let tabList = document.getElementById('tab_list');
@@ -17,15 +16,6 @@ function initialize() {
 }
 
 initialize();
-
-function fetchColumn(column) {
-    fetch('http://localhost:8080/get/' + column).then((res) => {
-        return res.json();
-    }).then((jsonData) => {
-        document.getElementById('result').innerText = JSON.stringify(jsonData);
-        console.log(jsonData);
-    });
-}
 
 function changeTab(tabName) {
     for (const tabNameElement of tabNames) {
