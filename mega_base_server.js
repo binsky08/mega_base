@@ -143,7 +143,7 @@ app.get('/data/:resourceType/', function (req, res) {
 })
 app.use(formidable());
 
-app.post('/data/:resourceType/', function (req, res) {
+app.patch('/data/:resourceType/', function (req, res) {
     updateContent(req.params.resourceType, res, req.fields);
 })
 
