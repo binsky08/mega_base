@@ -24,11 +24,10 @@ connection.connect(function (err) {
 
 const failResponse = function (statusCode, message, response) {
     response.status(statusCode);
-    response.message(message)
     response.type('application/json');
     response.send({
         error: message
-    })
+    });
     response.send();
 };
 
@@ -90,6 +89,43 @@ const updateContent = function (resource, res, data) {
     }
 }
 
+function createContent(resourceType, res, fields) {
+    if (fields === undefined || fields[Main_Identifier] === undefined) {
+        failResponse(404, 'not found', res);
+        return;
+    }
+
+    writeHead(res, 200, "application/json");
+    let table = databaseConnector.getTableName(resource);
+    let columns = databaseConnector.getColumns(table);
+    columns.shift(); // remove auto-Generated id
+
+    let insetValues = [];
+
+    for (let column of columns) {
+        // skip id, cause it's used for identification
+        if (column === Main_Identifier) {
+            continue;
+        }
+
+        if (fields[column] === undefined) {
+            failResponse(406, 'Field "' + column + '" isn\'t set')
+            return
+        }
+        insetValues.push(fields[column]);
+    }
+    delete fields[Main_Identifier];
+
+    getQueryResult("INSERT INTO " + table + " (" + columns.join(',') + ")" +
+        "VALUES (" + insetValues.join(', ') + ") ", insetValues, (data) => {
+        if (data.affectedRows === 0) {
+            failResponse(410, "No Dataset modified, maybe already deleted", res);
+        } else {
+            modificationResponse(data, res);
+        }
+    }, connection);
+}
+
 function modificationResponse(data, response) {
     if (data.affectedRows === 0) {
         failResponse(410, "No Dataset modified, maybe already deleted", response)
@@ -117,6 +153,10 @@ app.get('/data/:resourceType/', function (req, res) {
     fetchResource(req.params.resourceType, res);
 })
 app.use(formidable());
+
+app.post('/data/:resourceType/', function (req, res) {
+    createContent(req.params.resourceType, res, req.fields);
+})
 
 app.patch('/data/:resourceType/', function (req, res) {
     updateContent(req.params.resourceType, res, req.fields);
