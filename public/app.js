@@ -179,7 +179,7 @@ function editGame(gameListElement) {
                 editGameDate.value = '';
                 document.getElementById("edit_game_group").classList.add('display-none');
             } else {
-                alert(res.statusMessage);
+                alert(res.statusText);
             }
         });
 }
