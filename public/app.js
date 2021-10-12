@@ -20,8 +20,10 @@ function refreshList(type) {
 
             switch (type) {
                 case 'game':
+                    let releasedate = listElement.release_date.slice(0, 10);
+                    let releasdateObject = new Date(releasedate);
                     nameElement.innerText = listElement.name;
-                    nameElement.innerText += ' - Release date: ' + listElement.release_date.slice(0, 10);
+                    nameElement.innerText += ' - Release date: '+ releasdateObject.toLocaleDateString();
                     break;
                 case 'player':
                     nameElement.innerText = listElement.first_name + ' ' + listElement.last_name;
