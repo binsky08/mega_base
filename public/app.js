@@ -45,6 +45,8 @@ function refreshList(type) {
 
             if (type === 'game') {
                 editDiv.addEventListener('click', () => loadToEdit(type, listElement));
+            } else if (type === 'player') {
+                editDiv.addEventListener('click', () => loadToEdit(type, listElement));
             }
 
             const deleteButton = document.createElement("i");
@@ -93,11 +95,15 @@ function loadToEdit(type, listElement) {
     const clone = document.getElementById("edit_" + type + "_button").cloneNode(true);
     document.getElementById("edit_" + type + "_button").replaceWith(clone);
 
-    document.getElementById("edit_" + type + "_name").value = listElement.name;
     document.getElementById("edit_" + type + "_group").classList.remove('display-none');
     if (type === 'game') {
+        document.getElementById("edit_" + type + "_name").value = listElement.name;
         document.getElementById("edit_" + type + "_date").value = listElement.release_date.slice(0, 10);
         document.getElementById("edit_" + type + "_button").addEventListener('click', () => editGame(listElement));
+    } else if (type === 'player') {
+        document.getElementById("edit_" + type + "_first_name").value = listElement.first_name;
+        document.getElementById("edit_" + type + "_last_name").value = listElement.last_name;
+        document.getElementById("edit_" + type + "_button").addEventListener('click', () => editUser(listElement));
     }
 }
 
@@ -165,4 +171,35 @@ function editGame(gameListElement) {
                 alert(res.statusMessage);
             }
         });
+}
+
+function editUser(playerListElement) {
+    const editPlayerFirstName = document.getElementById("edit_player_first_name");
+    const editPlayerLastName = document.getElementById("edit_player_last_name");
+
+    const game = {
+        id: playerListElement.id,
+        first_name: editPlayerFirstName.value,
+        last_name: editPlayerLastName.value
+    };
+
+    const options = {
+        method: 'PATCH',
+        body: JSON.stringify(game),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    fetch(prefix + '/player', options)
+        .then(function (res) {
+            if (res.status === 200) {
+                refreshList('player');
+                editPlayerFirstName.value = '';
+                editPlayerLastName.value = '';
+                document.getElementById("edit_player_group").classList.add('display-none');
+            } else {
+                alert(res.statusMessage);
+            }
+        })
 }
