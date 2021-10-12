@@ -40,7 +40,7 @@ ul.horizontal_menu li {
     opacity: 1;
 }
 
-.app-tabs__container div {
+div.app-tabs__container  {
     margin: 5px;
     border: #a8a8a8 solid 1px;
     border-radius: 5px;
@@ -49,4 +49,9 @@ ul.horizontal_menu li {
 
 .display-none {
     display: none;
+}
+
+.icon {
+    margin: 5px;
+    display: inline;
 }

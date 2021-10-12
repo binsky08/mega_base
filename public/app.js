@@ -33,17 +33,27 @@ function refreshList(type) {
 
             child.appendChild(nameElement);
 
-            const editButton = document.createElement("button");
-            editButton.innerText = 'Edit';
-            editButton.style.marginLeft = '5px';
+            const editButton = document.createElement("i");
+            editButton.classList.add('fas');
+            editButton.classList.add('fa-edit')
+
+            const editDiv = document.createElement('div');
+            editDiv.appendChild(editButton);
+            editDiv.classList.add('icon');
+
             if (type === 'game') {
-                editButton.addEventListener('click', () => loadToEdit(type, listElement));
+                editDiv.addEventListener('click', () => loadToEdit(type, listElement));
             }
 
-            const deleteButton = document.createElement("button");
-            deleteButton.innerText = 'Delete';
-            deleteButton.style.marginLeft = '5px';
-            deleteButton.addEventListener('click', function () {
+            const deleteButton = document.createElement("i");
+            deleteButton.classList.add('fas');
+            deleteButton.classList.add('fa-trash')
+
+            const deleteDiv = document.createElement('div');
+            deleteDiv.appendChild(deleteButton);
+            deleteDiv.classList.add('icon');
+
+            deleteDiv.addEventListener('click', function () {
                 const options = {
                     method: 'DELETE',
                     body: JSON.stringify({
@@ -62,8 +72,8 @@ function refreshList(type) {
                 });
             });
 
-            child.appendChild(editButton);
-            child.appendChild(deleteButton);
+            child.appendChild(editDiv);
+            child.appendChild(deleteDiv);
             list.appendChild(child);
         }
     });

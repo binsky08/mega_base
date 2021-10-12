@@ -161,7 +161,8 @@ app.delete('/data/:resourceType/', function (req, res) {
     deleteContent(req.params.resourceType, res, req.body);
 })
 
-app.use(express.static('public'));
+app.use(express.static( __dirname + '/public'));
+app.use('/fontawesome', express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free'))
 app.listen(config.applicationPort);
 
 function writeHead(res, statusCode, contentType) {
