@@ -103,6 +103,7 @@ function loadToEdit(type, listElement) {
     } else if (type === 'player') {
         document.getElementById("edit_" + type + "_first_name").value = listElement.first_name;
         document.getElementById("edit_" + type + "_last_name").value = listElement.last_name;
+        document.getElementById("edit_" + type + "_date_of_birth").value = listElement.date_of_birth.slice(0, 10);
         document.getElementById("edit_" + type + "_button").addEventListener('click', () => editUser(listElement));
     }
 }
@@ -114,6 +115,11 @@ function add(type) {
         case 'game':
             obj.name = document.getElementById("add_" + type + "_name").value;
             obj.release_date = document.getElementById("add_" + type + "_date").value;
+            break;
+        case 'player':
+            obj.first_name = document.getElementById("add_" + type + "_first_name").value;
+            obj.last_name = document.getElementById("add_" + type + "_last_name").value;
+            obj.date_of_birth = document.getElementById("add_" + type + "_date_of_birth").value;
             break;
     }
 
@@ -176,11 +182,13 @@ function editGame(gameListElement) {
 function editUser(playerListElement) {
     const editPlayerFirstName = document.getElementById("edit_player_first_name");
     const editPlayerLastName = document.getElementById("edit_player_last_name");
+    const editPlayerDateOfBirth = document.getElementById("edit_player_date_of_birth");
 
     const game = {
         id: playerListElement.id,
         first_name: editPlayerFirstName.value,
-        last_name: editPlayerLastName.value
+        last_name: editPlayerLastName.value,
+        date_of_birth: editPlayerDateOfBirth.value
     };
 
     const options = {
