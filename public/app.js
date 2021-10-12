@@ -141,6 +141,11 @@ function add(type) {
                         document.getElementById("add_" + type + "_name").value = '';
                         document.getElementById("add_" + type + "_date").value = '';
                         break;
+                    case 'player':
+                        document.getElementById("add_" + type + "_first_name").value = '';
+                        document.getElementById("add_" + type + "_last_name").value = '';
+                        document.getElementById("add_" + type + "_date_of_birth").value = '';
+                        break;
                 }
             } else {
                 alert(res.statusMessage);
