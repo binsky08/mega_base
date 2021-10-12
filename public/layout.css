@@ -1,3 +1,7 @@
+li {
+    list-style-type: none;
+}
+
 ul.horizontal_menu li {
     display: inline;
     list-style-type: none;
