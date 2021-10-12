@@ -71,7 +71,7 @@ function refreshList(type) {
                     if (res.status === 200) {
                         refreshList('game');
                     } else {
-                        alert(res.statusMessage);
+                        alert(res.statusText);
                     }
                 });
             });
@@ -148,7 +148,7 @@ function add(type) {
                         break;
                 }
             } else {
-                alert(res.statusMessage);
+                alert(res.statusText);
             }
         });
 }
@@ -179,7 +179,7 @@ function editGame(gameListElement) {
                 editGameDate.value = '';
                 document.getElementById("edit_game_group").classList.add('display-none');
             } else {
-                alert(res.statusMessage);
+                alert(res.statusText);
             }
         });
 }
@@ -212,7 +212,7 @@ function editUser(playerListElement) {
                 editPlayerLastName.value = '';
                 document.getElementById("edit_player_group").classList.add('display-none');
             } else {
-                alert(res.statusMessage);
+                alert(res.statusText);
             }
         })
 }

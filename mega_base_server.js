@@ -24,6 +24,7 @@ connection.connect(function (err) {
 const failResponse = function (statusCode, message, response) {
     response.status(statusCode);
     response.type('application/json');
+    response.statusMessage = message;
     response.send({
         error: message
     });
