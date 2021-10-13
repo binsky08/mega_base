@@ -157,7 +157,7 @@ function showFriends(sourcePlayerId, players) {
             let iconContainer = document.createElement('div');
             iconContainer.addEventListener('click', () => eventHandlerName(sourcePlayerId, targetPlayer.id, players))
             iconContainer.appendChild(icon);
-            iconContainer.classList.add('friend-icon');
+            iconContainer.classList.add('icon');
             friendContent.appendChild(iconContainer);
 
             let playerName = targetPlayer.first_name + ' ' + targetPlayer.last_name;
