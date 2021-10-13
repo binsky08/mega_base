@@ -163,21 +163,40 @@ app.delete('/data/:resourceType/', function (req, res) {
 })
 
 function fetchFriendsIds(playerId, callback) {
-    getQueryResult("SELECT source_player_id FROM friends WHERE destination_player_id = ?;",
-        [playerId], (data) => {
-            const friendIds = [];
-            for (let friend of data) {
+
+    const friendIds = [];
+
+    getQueryResult("SELECT source_player_id, destination_player_id FROM friends" +
+        " WHERE ? in (source_player_id, destination_player_id )" +
+        " ;", [playerId], (data) => {
+        for (let friend of data) {
+            if (parseInt(friend.source_player_id) !== parseInt(playerId)) {
                 friendIds.push(friend.source_player_id);
+            } else if (parseInt(friend.destination_player_id) !== parseInt(playerId)) {
+                friendIds.push(friend.destination_player_id);
             }
-            getQueryResult("SELECT destination_player_id FROM friends" +
-                " WHERE source_player_id = ?  ;", [playerId], (data) => {
-                for (let friend of data) {
-                    friendIds.push(friend.source_player_id);
-                }
-                callback(friendIds);
-            }, connection);
-        }, connection);
+        }
+        callback(friendIds);
+    }, connection);
 }
+
+function addFriend(sourcePlayer, targetPlayer, callback) {
+
+    let sql = "INSERT INTO friends (source_player_id, destination_player_id) " +
+        "VALUES (?, ?) "
+    getQueryResult(sql, [sourcePlayer, targetPlayer], (data) => {
+        callback(data)
+    }, connection);
+}
+
+function removeFriend(sourcePlayer, targetPlayer, callback) {
+
+    let sql = "DELETE FROM friends WHERE (source_player_id = ? AND destination_player_id = ?) OR  (destination_player_id = ? AND source_player_id = ?) ";
+    getQueryResult(sql, [sourcePlayer, targetPlayer, sourcePlayer, targetPlayer], (data) => {
+        callback(data)
+    }, connection);
+}
+
 
 app.get('/data/friends/:playerId', function (req, res) {
     if (req.params === undefined || req.params.playerId === undefined) {
@@ -190,6 +209,44 @@ app.get('/data/friends/:playerId', function (req, res) {
     writeHead(res, 200, "application/json");
     fetchFriendsIds(playerId, (friendIds) => {
         modificationResponse(friendIds, res);
+    });
+});
+
+app.post('/data/friends/:playerId', function (req, res) {
+    if (req.params === undefined || req.params.playerId === undefined) {
+        failResponse(404, 'not found', res);
+        return;
+    }
+
+    const playerId = req.params.playerId;
+    const targetFriendId = req.body.destinationPlayerId;
+
+    writeHead(res, 200, "application/json");
+    addFriend(playerId, targetFriendId, (data) => {
+        if (data === undefined || data.affectedRows === 0) {
+            failResponse(410, "No Dataset modified, maybe already deleted", res);
+        } else {
+            modificationResponse(data, res);
+        }
+    });
+});
+
+app.delete('/data/friends/:playerId', function (req, res) {
+    if (req.params === undefined || req.params.playerId === undefined) {
+        failResponse(404, 'not found', res);
+        return;
+    }
+
+    const playerId = req.params.playerId;
+    const targetFriendId = req.body.destinationPlayerId;
+
+    writeHead(res, 200, "application/json");
+    removeFriend(playerId, targetFriendId, (data) => {
+        if (data === undefined || data.affectedRows === 0) {
+            failResponse(410, "No Dataset modified, maybe already deleted", res);
+        } else {
+            modificationResponse(data, res);
+        }
     });
 });
 
