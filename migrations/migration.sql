@@ -17,10 +17,12 @@ CREATE TABLE rating_agency
 
 CREATE TABLE link_game_rating_agency
 (
-    game_id          BIGINT REFERENCES game (id),
-    rating_agency_id BIGINT REFERENCES rating_agency (id),
+    game_id          BIGINT,
+    rating_agency_id BIGINT,
     age              INT NOT NULL,
-    PRIMARY KEY (game_id, rating_agency_id)
+    PRIMARY KEY (game_id, rating_agency_id),
+    FOREIGN KEY (game_id) REFERENCES game (id),
+    FOREIGN KEY (rating_agency_id) REFERENCES rating_agency (id)
 );
 
 CREATE TABLE category
@@ -31,8 +33,8 @@ CREATE TABLE category
 
 CREATE TABLE link_game_category
 (
-    game_id     BIGINT REFERENCES game (id),
-    category_id BIGINT REFERENCES category (id),
+    game_id     BIGINT,
+    category_id BIGINT,
     PRIMARY KEY (game_id, category_id)
 );
 
@@ -49,17 +51,21 @@ CREATE TABLE player
 
 CREATE TABLE link_player_game
 (
-    player_id BIGINT REFERENCES player (id),
-    game_id   BIGINT REFERENCES game (id),
-    PRIMARY KEY (player_id, game_id)
+    player_id BIGINT,
+    game_id   BIGINT,
+    PRIMARY KEY (player_id, game_id),
+    FOREIGN KEY (player_id) REFERENCES player (id),
+    FOREIGN KEY (game_id) REFERENCES game (id)
 );
 
 CREATE TABLE friends
 (
-    source_player_id      BIGINT REFERENCES player (id),
-    destination_player_id BIGINT REFERENCES player (id),
+    source_player_id      BIGINT,
+    destination_player_id BIGINT,
     CONSTRAINT columns_cannot_equal CHECK (friends.source_player_id <> friends.destination_player_id),
-    PRIMARY KEY (source_player_id, destination_player_id)
+    PRIMARY KEY (source_player_id, destination_player_id),
+    FOREIGN KEY (source_player_id) REFERENCES player (id),
+    FOREIGN KEY (destination_player_id) REFERENCES player (id)
 );
 
 INSERT INTO player (email, first_name, last_name, nickname, password_plain, date_of_birth)
@@ -127,64 +133,64 @@ FROM game g
 INSERT INTO link_game_category (game_id, category_id)
 SELECT g.id, c.id
 FROM game g
-         INNER JOIN category c on g.name in ('Tetris', 'Pong')
+         INNER JOIN category c ON g.name IN ('Tetris', 'Pong')
     AND c.name = 'Historisch';
 
 
-Insert INTO link_player_game (player_id, game_id)
+INSERT INTO link_player_game (player_id, game_id)
 SELECT p.id, g.id
 FROM game g
-         INNER JOIN player p on g.name in ('Portal 3')
+         INNER JOIN player p ON g.name IN ('Portal 3')
     AND p.nickname = 'JD';
 
-Insert INTO link_player_game (player_id, game_id)
+INSERT INTO link_player_game (player_id, game_id)
 SELECT p.id, g.id
 FROM game g
-         INNER JOIN player p on g.name in ('Tetris', 'Pong')
+         INNER JOIN player p ON g.name IN ('Tetris', 'Pong')
     AND p.nickname = 'PenguinMaster';
 
-Insert INTO link_player_game (player_id, game_id)
+INSERT INTO link_player_game (player_id, game_id)
 SELECT p.id, g.id
 FROM game g
-         INNER JOIN player p on g.name in ('GTA 5', 'GTA 6', 'Half Life')
+         INNER JOIN player p ON g.name IN ('GTA 5', 'GTA 6', 'Half Life')
     AND p.nickname = 'Mutti';
 
-Insert INTO link_player_game (player_id, game_id)
+INSERT INTO link_player_game (player_id, game_id)
 SELECT p.id, g.id
 FROM game g
-         INNER JOIN player p on g.name in ('GTA 5', 'GTA 6', 'Portal 3')
+         INNER JOIN player p ON g.name IN ('GTA 5', 'GTA 6', 'Portal 3')
     AND p.nickname = 'Andi';
 
-Insert INTO link_player_game (player_id, game_id)
+INSERT INTO link_player_game (player_id, game_id)
 SELECT p.id, g.id
 FROM game g
-         INNER JOIN player p on g.name in ('Daten versenken')
+         INNER JOIN player p ON g.name IN ('Daten versenken')
     AND p.nickname = 'Fratzenbuch';
 
 
-INSERT into friends (source_player_id, destination_player_id)
+INSERT INTO friends (source_player_id, destination_player_id)
 SELECT p1.id, p2.id
 FROM player p1
-         INNER JOIN player p2 ON p1.nickname = 'JD' and p2.nickname != 'JD';
+         INNER JOIN player p2 ON p1.nickname = 'JD' AND p2.nickname != 'JD';
 
-INSERT into friends (source_player_id, destination_player_id)
+INSERT INTO friends (source_player_id, destination_player_id)
 SELECT p1.id, p2.id
 FROM player p1
-         INNER JOIN player p2 ON p1.nickname = 'Mutti' and p2.nickname = 'Andi';
+         INNER JOIN player p2 ON p1.nickname = 'Mutti' AND p2.nickname = 'Andi';
 
-INSERT into friends (source_player_id, destination_player_id)
+INSERT INTO friends (source_player_id, destination_player_id)
 SELECT p1.id, p2.id
 FROM player p1
-         INNER JOIN player p2 ON p1.nickname = 'PenguinMaster' and p2.nickname = 'herzbeben';
+         INNER JOIN player p2 ON p1.nickname = 'PenguinMaster' AND p2.nickname = 'herzbeben';
 
-INSERT into friends (source_player_id, destination_player_id)
+INSERT INTO friends (source_player_id, destination_player_id)
 SELECT p1.id, p2.id
 FROM player p1
-         INNER JOIN player p2 ON p1.nickname = 'Mutti' and p2.nickname = 'Fratzenbuch';
+         INNER JOIN player p2 ON p1.nickname = 'Mutti' AND p2.nickname = 'Fratzenbuch';
 
 
 CREATE OR REPLACE VIEW hyper_secure_user_data_with_hashed_password AS
-SELECT id, email, first_name, last_name, nickname, MD5(password_plain) as secret, date_of_birth
+SELECT id, email, first_name, last_name, nickname, MD5(password_plain) AS secret, date_of_birth
 FROM player;
 
 
