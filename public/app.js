@@ -138,6 +138,10 @@ function showFriends(sourcePlayerId, players) {
         friendsContent.innerHTML = '';
         for (let targetPlayer of players) {
 
+            if (targetPlayer.id === parseInt(sourcePlayerId)) {
+                continue;
+            }
+
             let friendContent = document.createElement('div');
             friendContent.classList.add('list-entry');
 
