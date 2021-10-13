@@ -2,6 +2,9 @@ DROP DATABASE IF EXISTS mega_base;
 CREATE DATABASE mega_base;
 USE mega_base;
 
+
+-- table definition
+
 CREATE TABLE game
 (
     id           BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -21,8 +24,8 @@ CREATE TABLE link_game_rating_agency
     rating_agency_id BIGINT,
     age              INT NOT NULL,
     PRIMARY KEY (game_id, rating_agency_id),
-    FOREIGN KEY (game_id) REFERENCES game (id),
-    FOREIGN KEY (rating_agency_id) REFERENCES rating_agency (id)
+    FOREIGN KEY (game_id) REFERENCES game (id) ON DELETE CASCADE,
+    FOREIGN KEY (rating_agency_id) REFERENCES rating_agency (id) ON DELETE CASCADE
 );
 
 CREATE TABLE category
@@ -35,7 +38,9 @@ CREATE TABLE link_game_category
 (
     game_id     BIGINT,
     category_id BIGINT,
-    PRIMARY KEY (game_id, category_id)
+    PRIMARY KEY (game_id, category_id),
+    FOREIGN KEY (game_id) REFERENCES game (id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE
 );
 
 CREATE TABLE player
@@ -54,8 +59,8 @@ CREATE TABLE link_player_game
     player_id BIGINT,
     game_id   BIGINT,
     PRIMARY KEY (player_id, game_id),
-    FOREIGN KEY (player_id) REFERENCES player (id),
-    FOREIGN KEY (game_id) REFERENCES game (id)
+    FOREIGN KEY (player_id) REFERENCES player (id) ON DELETE CASCADE,
+    FOREIGN KEY (game_id) REFERENCES game (id) ON DELETE CASCADE
 );
 
 CREATE TABLE friends
@@ -64,9 +69,19 @@ CREATE TABLE friends
     destination_player_id BIGINT,
     CONSTRAINT columns_cannot_equal CHECK (friends.source_player_id <> friends.destination_player_id),
     PRIMARY KEY (source_player_id, destination_player_id),
-    FOREIGN KEY (source_player_id) REFERENCES player (id),
-    FOREIGN KEY (destination_player_id) REFERENCES player (id)
+    FOREIGN KEY (source_player_id) REFERENCES player (id) ON DELETE CASCADE,
+    FOREIGN KEY (destination_player_id) REFERENCES player (id) ON DELETE CASCADE
 );
+
+
+-- view definition
+
+CREATE OR REPLACE VIEW hyper_secure_user_data_with_hashed_password AS
+SELECT id, email, first_name, last_name, nickname, MD5(password_plain) AS secret, date_of_birth
+FROM player;
+
+
+-- data definition
 
 INSERT INTO player (email, first_name, last_name, nickname, password_plain, date_of_birth)
 VALUES ('gamer@examle.de', 'Jane', 'Doe', 'JD', '12345678', '1971-02-01'),
@@ -187,12 +202,3 @@ INSERT INTO friends (source_player_id, destination_player_id)
 SELECT p1.id, p2.id
 FROM player p1
          INNER JOIN player p2 ON p1.nickname = 'Mutti' AND p2.nickname = 'Fratzenbuch';
-
-
-CREATE OR REPLACE VIEW hyper_secure_user_data_with_hashed_password AS
-SELECT id, email, first_name, last_name, nickname, MD5(password_plain) AS secret, date_of_birth
-FROM player;
-
-
-SELECT *
-FROM hyper_secure_user_data_with_hashed_password;
