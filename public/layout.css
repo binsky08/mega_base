@@ -57,6 +57,12 @@ div.app-tabs__container {
     cursor: pointer;
 }
 
+.friend-icon {
+    display: inline-block;
+    margin: 0 5px 0 0;
+    cursor: pointer;
+}
+
 .list-entry {
     padding: 10px;
     background-color: #e3e3e3;

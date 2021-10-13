@@ -139,7 +139,8 @@ function showFriends(sourcePlayerId, players) {
         friendsContent.innerHTML = '';
         for (let targetPlayer of players) {
 
-            let friendContent = document.createElement('li');
+            let friendContent = document.createElement('div');
+            friendContent.classList.add('list-entry');
 
             let iconClass;
             let eventHandlerName;
@@ -157,8 +158,7 @@ function showFriends(sourcePlayerId, players) {
             let iconContainer = document.createElement('div');
             iconContainer.addEventListener('click', () => eventHandlerName(sourcePlayerId, targetPlayer.id, players))
             iconContainer.appendChild(icon);
-            iconContainer.style.display = 'inline-block';
-            iconContainer.style.margin = "0 5px 0 0"
+            iconContainer.classList.add('friend-icon');
             friendContent.appendChild(iconContainer);
 
             let playerName = targetPlayer.first_name + ' ' + targetPlayer.last_name;
