@@ -80,7 +80,7 @@ const updateContent = function (resource, res, data) {
         getQueryResult("UPDATE " + table + " " +
             "SET " + updateColumns.join(', ') + " " +
             "WHERE id = ?;", updateValues, (data) => {
-            if (data.affectedRows === 0) {
+            if (data === undefined || data.affectedRows === 0) {
                 failResponse(410, "No Dataset modified, maybe already deleted", res);
             } else {
                 modificationResponse(data, res);
@@ -114,7 +114,7 @@ function createContent(resourceType, res, fields) {
     let sql = "INSERT INTO " + table + " (" + columns.join(',') + ")" +
         "VALUES (" + insertPlaceHolders.join(',') + ") "
     getQueryResult(sql, insetValues, (data) => {
-        if (data.affectedRows === 0) {
+        if (data === undefined && data.affectedRows === 0) {
             failResponse(410, "No Dataset modified, maybe already deleted", res);
         } else {
             modificationResponse(data, res);
@@ -123,7 +123,7 @@ function createContent(resourceType, res, fields) {
 }
 
 function modificationResponse(data, response) {
-    if (data.affectedRows === 0) {
+    if (data === undefined || data.affectedRows === 0) {
         failResponse(410, "No Dataset modified, maybe already deleted", response)
     } else {
         response.send(JSON.stringify(data));
@@ -162,7 +162,7 @@ app.delete('/data/:resourceType/', function (req, res) {
     deleteContent(req.params.resourceType, res, req.body);
 })
 
-app.use(express.static( __dirname + '/public'));
+app.use(express.static(__dirname + '/public'));
 app.use('/fontawesome', express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free'))
 app.listen(config.applicationPort);
 
