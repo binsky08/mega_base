@@ -163,20 +163,20 @@ app.delete('/data/:resourceType/', function (req, res) {
 })
 
 function fetchFriendsIds(playerId, callback) {
-    getQueryResult("SELECT source_player_id FROM friends WHERE destination_player_id = ?);",
+    getQueryResult("SELECT source_player_id FROM friends WHERE destination_player_id = ?;",
         [playerId], (data) => {
             const friendIds = [];
             for (let friend of data) {
                 friendIds.push(friend.source_player_id);
             }
-            getQueryResult("SELECT destination_player_id FROM " +
-                " WHERE source_player_id = ?)  ;", [playerId], (data) => {
+            getQueryResult("SELECT destination_player_id FROM friends" +
+                " WHERE source_player_id = ?  ;", [playerId], (data) => {
                 for (let friend of data) {
                     friendIds.push(friend.source_player_id);
                 }
                 callback(friendIds);
             }, connection);
-        });
+        }, connection);
 }
 
 app.get('/data/friends/:playerId', function (req, res) {
@@ -188,7 +188,7 @@ app.get('/data/friends/:playerId', function (req, res) {
     const playerId = req.params.playerId;
 
     writeHead(res, 200, "application/json");
-    fetchFriendsIds(playerId, res, (friendIds) => {
+    fetchFriendsIds(playerId, (friendIds) => {
         modificationResponse(friendIds, res);
     });
 });
