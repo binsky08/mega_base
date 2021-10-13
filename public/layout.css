@@ -69,7 +69,7 @@ div.app-tabs__container {
 }
 
 .list-entry > span {
-    margin-right: 5px;
+    margin-left: 5px;
 }
 
 .fa-trash:hover {
