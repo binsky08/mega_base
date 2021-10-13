@@ -1,13 +1,5 @@
 const prefix = '/data';
 
-function fetchTable(table) {
-    fetch(prefix + '/get/' + table).then((res) => {
-        return res.json();
-    }).then((jsonData) => {
-        document.getElementById('result').innerText = JSON.stringify(jsonData);
-    });
-}
-
 function refreshList(type) {
     fetch(prefix + '/' + type).then((res) => {
         return res.json();
@@ -15,7 +7,8 @@ function refreshList(type) {
         const list = document.getElementById(type + '_list');
         list.innerHTML = '';
         for (const listElement of jsonData) {
-            const child = document.createElement('li');
+            const child = document.createElement('div');
+            child.classList.add('list-entry');
             const nameElement = document.createElement('span');
 
             switch (type) {
@@ -71,7 +64,7 @@ function refreshList(type) {
                 };
                 fetch(prefix + '/' + type, options).then((res) => {
                     if (res.status === 200) {
-                        refreshList('game');
+                        refreshList(type);
                     } else {
                         alert(res.statusText);
                     }
@@ -237,6 +230,10 @@ function resetFields(modificationType, resourceType) {
             document.getElementById(modificationType + "_" + resourceType + "_password").value = '';
             document.getElementById(modificationType + "_" + resourceType + "_date_of_birth").value = '';
             break;
+        case 'game':
+            document.getElementById(modificationType + "_" + resourceType + "_name").value = '';
+            document.getElementById(modificationType + "_" + resourceType + "_date").value = '';
+            break;
         default:
             alert('type ' + resourceType + ' not supported');
             break;
@@ -311,8 +308,7 @@ function editGame(gameListElement) {
         .then(function (res) {
             if (res.status === 200) {
                 refreshList('game');
-                editGameName.value = '';
-                editGameDate.value = '';
+                resetFields('edit', 'game');
                 document.getElementById("edit_game_group").classList.add('display-none');
             } else {
                 alert(res.statusText);
