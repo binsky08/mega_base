@@ -1,13 +1,5 @@
 const prefix = '/data';
 
-function fetchTable(table) {
-    fetch(prefix + '/get/' + table).then((res) => {
-        return res.json();
-    }).then((jsonData) => {
-        document.getElementById('result').innerText = JSON.stringify(jsonData);
-    });
-}
-
 function refreshList(type) {
     fetch(prefix + '/' + type).then((res) => {
         return res.json();
@@ -15,7 +7,8 @@ function refreshList(type) {
         const list = document.getElementById(type + '_list');
         list.innerHTML = '';
         for (const listElement of jsonData) {
-            const child = document.createElement('li');
+            const child = document.createElement('div');
+            child.classList.add('list-entry');
             const nameElement = document.createElement('span');
 
             switch (type) {

@@ -28,8 +28,8 @@ ul.horizontal_menu li {
     text-align: center;
     white-space: nowrap;
     text-overflow: ellipsis;
-    opacity: .6;
-    color: dimgrey;
+    opacity: .55;
+    color: #565656;
     border-bottom: 1px solid black;
     width: 50px;
     list-style-type: none;
@@ -40,7 +40,7 @@ ul.horizontal_menu li {
     opacity: 1;
 }
 
-div.app-tabs__container  {
+div.app-tabs__container {
     margin: 5px;
     border: #a8a8a8 solid 1px;
     border-radius: 5px;
@@ -54,4 +54,20 @@ div.app-tabs__container  {
 .icon {
     margin: 5px;
     display: inline;
+    cursor: pointer;
+}
+
+.list-entry {
+    padding: 10px;
+    background-color: #e3e3e3;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.list-entry:hover {
+    background-color: #ddd;
+}
+
+.list-entry > span {
+    margin-right: 5px;
 }
