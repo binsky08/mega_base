@@ -23,7 +23,7 @@ function refreshList(type) {
                     let releasedate = listElement.release_date.slice(0, 10);
                     let releasdateObject = new Date(releasedate);
                     nameElement.innerText = listElement.name;
-                    nameElement.innerText += ' - Release date: '+ releasdateObject.toLocaleDateString();
+                    nameElement.innerText += ' - Release date: ' + releasdateObject.toLocaleDateString();
                     break;
                 case 'player':
                     nameElement.innerText = listElement.first_name + ' ' + listElement.last_name;
@@ -101,10 +101,29 @@ function loadToEdit(type, listElement) {
         document.getElementById("edit_" + type + "_date").value = listElement.release_date.slice(0, 10);
         document.getElementById("edit_" + type + "_button").addEventListener('click', () => editGame(listElement));
     } else if (type === 'player') {
+        document.getElementById("edit_" + type + "_email").value = listElement.email;
         document.getElementById("edit_" + type + "_first_name").value = listElement.first_name;
         document.getElementById("edit_" + type + "_last_name").value = listElement.last_name;
+        document.getElementById("edit_" + type + "_nickname").value = listElement.nickname;
+        document.getElementById("edit_" + type + "_password").value = listElement.password_plain;
         document.getElementById("edit_" + type + "_date_of_birth").value = listElement.date_of_birth.slice(0, 10);
         document.getElementById("edit_" + type + "_button").addEventListener('click', () => editUser(listElement));
+    }
+}
+
+function resetFields(modificationType, resourceType) {
+    switch (resourceType) {
+        case 'player':
+            document.getElementById(modificationType + "_" + resourceType + "_email").value = '';
+            document.getElementById(modificationType + "_" + resourceType + "_first_name").value = '';
+            document.getElementById(modificationType + "_" + resourceType + "_last_name").value = '';
+            document.getElementById(modificationType + "_" + resourceType + "_nickname").value = '';
+            document.getElementById(modificationType + "_" + resourceType + "_password").value = '';
+            document.getElementById(modificationType + "_" + resourceType + "_date_of_birth").value = '';
+            break;
+        default:
+            alert('type ' + resourceType + ' not supported');
+            break;
     }
 }
 
@@ -117,8 +136,11 @@ function add(type) {
             obj.release_date = document.getElementById("add_" + type + "_date").value;
             break;
         case 'player':
+            obj.email = document.getElementById("add_" + type + "_email").value;
             obj.first_name = document.getElementById("add_" + type + "_first_name").value;
             obj.last_name = document.getElementById("add_" + type + "_last_name").value;
+            obj.nickname = document.getElementById("add_" + type + "_nickname").value;
+            obj.password_plain = document.getElementById("add_" + type + "_password").value;
             obj.date_of_birth = document.getElementById("add_" + type + "_date_of_birth").value;
             break;
     }
@@ -142,9 +164,7 @@ function add(type) {
                         document.getElementById("add_" + type + "_date").value = '';
                         break;
                     case 'player':
-                        document.getElementById("add_" + type + "_first_name").value = '';
-                        document.getElementById("add_" + type + "_last_name").value = '';
-                        document.getElementById("add_" + type + "_date_of_birth").value = '';
+                        resetFields('add', type);
                         break;
                 }
             } else {
@@ -185,20 +205,18 @@ function editGame(gameListElement) {
 }
 
 function editUser(playerListElement) {
-    const editPlayerFirstName = document.getElementById("edit_player_first_name");
-    const editPlayerLastName = document.getElementById("edit_player_last_name");
-    const editPlayerDateOfBirth = document.getElementById("edit_player_date_of_birth");
-
-    const game = {
-        id: playerListElement.id,
-        first_name: editPlayerFirstName.value,
-        last_name: editPlayerLastName.value,
-        date_of_birth: editPlayerDateOfBirth.value
-    };
+    let player = {id: playerListElement.id};
+    const type = 'player';
+    player.email = document.getElementById("edit_" + type + "_email").value;
+    player.first_name = document.getElementById("edit_" + type + "_first_name").value;
+    player.last_name = document.getElementById("edit_" + type + "_last_name").value;
+    player.nickname = document.getElementById("edit_" + type + "_nickname").value;
+    player.password_plain = document.getElementById("edit_" + type + "_password").value;
+    player.date_of_birth = document.getElementById("edit_" + type + "_date_of_birth").value;
 
     const options = {
         method: 'PATCH',
-        body: JSON.stringify(game),
+        body: JSON.stringify(player),
         headers: {
             'Content-Type': 'application/json'
         }
@@ -208,8 +226,7 @@ function editUser(playerListElement) {
         .then(function (res) {
             if (res.status === 200) {
                 refreshList('player');
-                editPlayerFirstName.value = '';
-                editPlayerLastName.value = '';
+                resetFields('edit', 'player');
                 document.getElementById("edit_player_group").classList.add('display-none');
             } else {
                 alert(res.statusText);
