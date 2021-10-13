@@ -31,6 +31,8 @@ function refreshList(type) {
                 case 'category':
                     nameElement.innerText = listElement.name;
                     break;
+                case 'friends':
+                    break;
             }
 
             child.appendChild(nameElement);
@@ -86,6 +88,34 @@ function refreshList(type) {
 refreshList('game');
 refreshList('player');
 refreshList('category');
+
+function showFriends(playerId, players) {
+    fetch(prefix + '/friends/' + playerId).then((res) => {
+        return res.json();
+    }).then((friends) => {
+        for (let friend of friends) {
+
+        }
+    });
+    return undefined;
+}
+
+function loadPlayerSelection() {
+    fetch(prefix + '/player').then((res) => {
+        return res.json();
+    }).then((players) => {
+        const playerSelection = document.getElementById('player_friends_list');
+        for (const player of players) {
+            const optionValue = document.createElement('option');
+            optionValue.value = player.id;
+            optionValue.innerText = player.first_name + ' ' + player.last_name;
+            playerSelection.appendChild(optionValue);
+        }
+        playerSelection.addEventListener('change', (ev) => showFriends(this.value, players))
+    });
+}
+
+loadPlayerSelection();
 
 document.getElementById("add_game_button").addEventListener("click", () => add('game'));
 document.getElementById("add_player_button").addEventListener("click", () => add('player'));

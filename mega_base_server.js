@@ -162,6 +162,37 @@ app.delete('/data/:resourceType/', function (req, res) {
     deleteContent(req.params.resourceType, res, req.body);
 })
 
+function fetchFriendsIds(playerId, callback) {
+    getQueryResult("SELECT source_player_id FROM friends WHERE destination_player_id = ?);",
+        [playerId], (data) => {
+            const friendIds = [];
+            for (let friend of data) {
+                friendIds.push(friend.source_player_id);
+            }
+            getQueryResult("SELECT destination_player_id FROM " +
+                " WHERE source_player_id = ?)  ;", [playerId], (data) => {
+                for (let friend of data) {
+                    friendIds.push(friend.source_player_id);
+                }
+                callback(friendIds);
+            }, connection);
+        });
+}
+
+app.get('/data/friends/:playerId', function (req, res) {
+    if (req.params === undefined || req.params.playerId === undefined) {
+        failResponse(404, 'not found', res);
+        return;
+    }
+
+    const playerId = req.params.playerId;
+
+    writeHead(res, 200, "application/json");
+    fetchFriendsIds(playerId, res, (friendIds) => {
+        modificationResponse(friendIds, res);
+    });
+});
+
 app.use(express.static(__dirname + '/public'));
 app.use('/fontawesome', express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free'))
 app.listen(config.applicationPort);
