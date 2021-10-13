@@ -75,3 +75,7 @@ div.app-tabs__container {
 .fa-trash:hover {
     color: red;
 }
+
+#content_structure {
+    text-align: center;
+}

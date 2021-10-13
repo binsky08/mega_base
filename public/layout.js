@@ -1,4 +1,4 @@
-const tabNames = ['games', 'player','category'];
+const tabNames = ['games', 'player', 'category', 'structure'];
 
 function initialize() {
     let tabList = document.getElementById('tab_list');
@@ -8,7 +8,9 @@ function initialize() {
         if (tabNameElement === 'games') {
             li.classList.add('active');
         }
-        li.addEventListener('click', function() { changeTab(tabNameElement); });
+        li.addEventListener('click', function () {
+            changeTab(tabNameElement);
+        });
         li.innerText = tabNameElement.charAt(0).toUpperCase() + tabNameElement.slice(1);
         li.id = 'tab_' + tabNameElement;
         tabList.appendChild(li);
