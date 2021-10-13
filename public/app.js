@@ -114,6 +114,10 @@ function resetFields(modificationType, resourceType) {
             document.getElementById(modificationType + "_" + resourceType + "_password").value = '';
             document.getElementById(modificationType + "_" + resourceType + "_date_of_birth").value = '';
             break;
+        case 'game':
+            document.getElementById(modificationType + "_" + resourceType + "_name").value = '';
+            document.getElementById(modificationType + "_" + resourceType + "_date").value = '';
+            break;
         default:
             alert('type ' + resourceType + ' not supported');
             break;
@@ -188,8 +192,7 @@ function editGame(gameListElement) {
         .then(function (res) {
             if (res.status === 200) {
                 refreshList('game');
-                editGameName.value = '';
-                editGameDate.value = '';
+                resetFields('edit', 'game');
                 document.getElementById("edit_game_group").classList.add('display-none');
             } else {
                 alert(res.statusText);
