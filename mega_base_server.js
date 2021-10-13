@@ -138,7 +138,7 @@ function deleteContent(resourceType, response, data) {
     }
 
     writeHead(response, 200, "application/json");
-    let table = databaseConnector.getTableName(response);
+    let table = databaseConnector.getTableName(resourceType);
     getQueryResult("DELETE FROM " + table + " " +
         " WHERE id = ?;", [data[Main_Identifier]], (data) => {
         modificationResponse(data, response);

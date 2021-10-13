@@ -62,7 +62,7 @@ function refreshList(type) {
                 };
                 fetch(prefix + '/' + type, options).then((res) => {
                     if (res.status === 200) {
-                        refreshList('game');
+                        refreshList(type);
                     } else {
                         alert(res.statusText);
                     }
