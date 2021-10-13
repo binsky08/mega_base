@@ -114,7 +114,7 @@ function createContent(resourceType, res, fields) {
     let sql = "INSERT INTO " + table + " (" + columns.join(',') + ")" +
         "VALUES (" + insertPlaceHolders.join(',') + ") "
     getQueryResult(sql, insetValues, (data) => {
-        if (data === undefined && data.affectedRows === 0) {
+        if (data === undefined || data.affectedRows === 0) {
             failResponse(410, "No Dataset modified, maybe already deleted", res);
         } else {
             modificationResponse(data, res);
