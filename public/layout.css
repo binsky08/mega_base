@@ -85,3 +85,11 @@ div.app-tabs__container {
 #content_structure {
     text-align: center;
 }
+
+#edit_player_group, #add_player_group {
+    padding: 5px;
+}
+
+input[type=text], input[type=email], input[type=password], input[type=date] {
+    margin: 5px;
+}
