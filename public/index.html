@@ -6,70 +6,70 @@
     <script defer src="/fontawesome/js/fontawesome.js"></script>
 </head>
 <body>
-    <link rel="stylesheet" href="layout.css">
-    <script defer src="layout.js"></script>
-    <script defer src="app.js"></script>
+<link rel="stylesheet" href="layout.css">
+<script defer src="layout.js"></script>
+<script defer src="app.js"></script>
 
-    <div class="app-tabs">
-        <nav>
-            <ul id="tab_list" class="horizontal_menu"></ul>
-        </nav>
-        <div class="app-tabs__container">
-            <div id="content_games">
-                <div id="add_game_group">
-                    <input type="text" id="add_game_name">
-                    <input type="date" id="add_game_date">
-                    <button id="add_game_button">add</button>
-                </div>
-                <div id="edit_game_group" class="display-none">
-                    <input type="text" id="edit_game_name">
-                    <input type="date" id="edit_game_date">
-                    <button id="edit_game_button">update</button>
-                </div>
+<div class="app-tabs">
+    <nav>
+        <ul id="tab_list" class="horizontal_menu"></ul>
+    </nav>
+    <div class="app-tabs__container">
+        <div id="content_games">
+            <div id="add_game_group">
+                <input type="text" id="add_game_name">
+                <input type="date" id="add_game_date">
+                <button id="add_game_button">add</button>
+            </div>
+            <div id="edit_game_group" class="display-none">
+                <input type="text" id="edit_game_name">
+                <input type="date" id="edit_game_date">
+                <button id="edit_game_button">update</button>
+            </div>
 
-                <div id="game_list" class="list"></div>
+            <div id="game_list" class="list"></div>
+        </div>
+        <div id="content_player" class="display-none">
+            <div id="add_player_group">
+                <input type="email" id="add_player_email" placeholder="E-Mail"><br>
+                <input type="text" id="add_player_first_name" placeholder="first name">
+                <input type="text" id="add_player_last_name" placeholder="last name">
+                <br>
+                <input type="text" id="add_player_nickname" placeholder="nickname">
+                <input type="password" id="add_player_password" placeholder="password">
+                <br>
+                <input type="date" id="add_player_date_of_birth" placeholder="date of birth">
+                <button id="add_player_button">add</button>
             </div>
-            <div id="content_player" class="display-none">
-                <div id="add_player_group">
-                    <input type="email" id="add_player_email" placeholder="E-Mail"><br>
-                    <input type="text" id="add_player_first_name" placeholder="first name">
-                    <input type="text" id="add_player_last_name" placeholder="last name">
-                    <br>
-                    <input type="text" id="add_player_nickname" placeholder="nickname">
-                    <input type="password" id="add_player_password" placeholder="password">
-                    <br>
-                    <input type="date" id="add_player_date_of_birth" placeholder="date of birth">
-                    <button id="add_player_button">add</button>
-                </div>
-                <div id="edit_player_group" class="display-none">
-                    <input type="email" id="edit_player_email" placeholder="E-Mail">
-                    <br>
-                    <input type="text" id="edit_player_first_name" placeholder="first name">
-                    <input type="text" id="edit_player_last_name" placeholder="last name">
-                    <br>
-                    <input type="text" id="edit_player_nickname" placeholder="nickname">
-                    <input type="password" id="edit_player_password" placeholder="password">
-                    <br>
-                    <input type="date" id="edit_player_date_of_birth" placeholder="date of birth">
-                    <button id="edit_player_button">update</button>
-                </div>
+            <div id="edit_player_group" class="display-none">
+                <input type="email" id="edit_player_email" placeholder="E-Mail">
+                <br>
+                <input type="text" id="edit_player_first_name" placeholder="first name">
+                <input type="text" id="edit_player_last_name" placeholder="last name">
+                <br>
+                <input type="text" id="edit_player_nickname" placeholder="nickname">
+                <input type="password" id="edit_player_password" placeholder="password">
+                <br>
+                <input type="date" id="edit_player_date_of_birth" placeholder="date of birth">
+                <button id="edit_player_button">update</button>
+            </div>
 
-                <div id="player_list" class="list"></div>
-            </div>
-            <div id="content_category" class="display-none">
-                <input type="text" id="add_category_name">
-                <button id="add_category_button">add</button>
+            <div id="player_list" class="list"></div>
+        </div>
+        <div id="content_category" class="display-none">
+            <input type="text" id="add_category_name">
+            <button id="add_category_button">add</button>
 
-                <div id="category_list" class="list"></div>
-            </div>
-            <div id="content_structure" class="display-none">
-                <img src="db-structure.png"  alt="database structure"/>
-            </div>
+            <div id="category_list" class="list"></div>
+        </div>
+        <div id="content_structure" class="display-none">
+            <img src="db-structure.png" alt="database structure"/>
         </div>
         <div id="content_friends" class="display-none">
             <select id="player_friends_list"></select>
             <ul id="friends_of_player"></ul>
         </div>
     </div>
+</div>
 </body>
 </html>
