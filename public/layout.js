@@ -1,4 +1,4 @@
-const tabNames = ['games', 'player', 'category', 'structure'];
+const tabNames = ['games', 'player','category', 'friends', 'structure'];
 
 function initialize() {
     let tabList = document.getElementById('tab_list');

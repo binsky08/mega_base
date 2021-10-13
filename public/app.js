@@ -24,6 +24,8 @@ function refreshList(type) {
                 case 'category':
                     nameElement.innerText = listElement.name;
                     break;
+                case 'friends':
+                    break;
             }
 
             child.appendChild(nameElement);
@@ -79,6 +81,120 @@ function refreshList(type) {
 refreshList('game');
 refreshList('player');
 refreshList('category');
+
+function addFriend(sourcePlayerId, destinationPlayerId, players) {
+    let obj = {
+        destinationPlayerId: destinationPlayerId
+    }
+
+    const options = {
+        method: 'POST',
+        body: JSON.stringify(obj),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    fetch(prefix + '/friends/' + sourcePlayerId, options)
+        .then(function (res) {
+            if (res.status === 200) {
+                showFriends(sourcePlayerId, players)
+            } else {
+                alert(res.statusText);
+            }
+        });
+}
+
+function removeFriend(sourcePlayerId, destinationPlayerId, players) {
+    let obj = {
+        destinationPlayerId: destinationPlayerId
+    }
+
+    const options = {
+        method: 'DELETE',
+        body: JSON.stringify(obj),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    fetch(prefix + '/friends/' + sourcePlayerId, options)
+        .then(function (res) {
+            if (res.status === 200) {
+                showFriends(sourcePlayerId, players)
+            } else {
+                alert(res.statusText);
+            }
+        });
+}
+
+function showFriends(sourcePlayerId, players) {
+    fetch(prefix + '/friends/' + sourcePlayerId).then((res) => {
+        if (res.status !== 200) {
+            return Promise.reject('get status ' + res.status);
+        }
+        return res.json();
+    }).then((friendIds) => {
+        let friendsContent = document.getElementById('friends_of_player');
+        friendsContent.innerHTML = '';
+        for (let targetPlayer of players) {
+
+            let friendContent = document.createElement('li');
+
+            let iconClass;
+            let eventHandlerName;
+            if (friendIds.indexOf(targetPlayer.id) === -1) {
+                iconClass = 'fa-plus';
+                eventHandlerName = addFriend;
+            } else {
+                iconClass = 'fa-minus';
+                eventHandlerName = removeFriend;
+            }
+
+            let icon = document.createElement('i');
+            icon.classList.add('fas', iconClass);
+
+            let iconContainer = document.createElement('div');
+            iconContainer.addEventListener('click', () => eventHandlerName(sourcePlayerId, targetPlayer.id, players))
+            iconContainer.appendChild(icon);
+            iconContainer.style.display = 'inline-block';
+            iconContainer.style.margin = "0 5px 0 0"
+            friendContent.appendChild(iconContainer);
+
+            let playerName = targetPlayer.first_name + ' ' + targetPlayer.last_name;
+            let friend = document.createElement('span');
+            friend.innerText = playerName
+            friendContent.appendChild(friend);
+
+            friendsContent.appendChild(friendContent);
+        }
+    });
+    return undefined;
+}
+
+function loadPlayerSelection() {
+    fetch(prefix + '/player').then((res) => {
+        return res.json();
+    }).then((players) => {
+        const playerSelection = document.getElementById('player_friends_list');
+        const optionValue = document.createElement('option');
+        optionValue.value = -1;
+        optionValue.innerText = 'Please select value';
+        optionValue.disabled = true;
+        optionValue.selected = true;
+        playerSelection.appendChild(optionValue);
+
+        for (const player of players) {
+            const optionValue = document.createElement('option');
+            optionValue.value = player.id;
+            optionValue.innerText = player.first_name + ' ' + player.last_name;
+            playerSelection.appendChild(optionValue);
+        }
+        playerSelection.addEventListener('change', (ev) => showFriends(ev.target.value, players))
+    });
+}
+
+loadPlayerSelection();
 
 document.getElementById("add_game_button").addEventListener("click", () => add('game'));
 document.getElementById("add_player_button").addEventListener("click", () => add('player'));
