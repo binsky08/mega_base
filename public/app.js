@@ -28,8 +28,6 @@ function refreshList(type) {
                     break;
             }
 
-            child.appendChild(nameElement);
-
             const editButton = document.createElement("i");
             editButton.classList.add('fas');
             editButton.classList.add('fa-edit')
@@ -73,6 +71,7 @@ function refreshList(type) {
 
             child.appendChild(editDiv);
             child.appendChild(deleteDiv);
+            child.appendChild(nameElement);
             list.appendChild(child);
         }
     });
