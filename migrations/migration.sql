@@ -77,7 +77,7 @@ CREATE TABLE friends
 -- view definition
 
 CREATE OR REPLACE VIEW hyper_secure_user_data_with_hashed_password AS
-SELECT id, email, first_name, last_name, nickname, MD5(password_plain) AS secret, date_of_birth
+SELECT id, email, first_name, last_name, nickname, SHA2(password_plain, 256) AS secret, date_of_birth
 FROM player;
 
 
