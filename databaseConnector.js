@@ -1,4 +1,5 @@
 const fs = require("fs");
+const mariadb_callback = require('mariadb/callback');
 
 function getConfiguration() {
     let configContent = fs.readFileSync('config/environment.config.json');
@@ -9,6 +10,22 @@ function getDatabaseConfig() {
     let config = getConfiguration();
 
     return config.database
+}
+
+function getDatabaseConnection(){
+    let databaseConfig = getDatabaseConfig();
+    const connection = mariadb_callback.createConnection({
+        host: databaseConfig.host,
+        ssl: databaseConfig.ssl,
+        port: databaseConfig.port,
+        user: databaseConfig.username,
+        password: databaseConfig.password,
+        database: databaseConfig.database
+    });
+    connection.connect(function (err) {
+        if (err) throw err;
+    });
+    return connection;
 }
 
 function getColumns(table, mainID) {
@@ -52,4 +69,12 @@ function getTableName(resource) {
     return table;
 }
 
-module.exports = { getDatabaseConfig, getColumns, getTableName, getConfiguration };
+function getQueryResult(sql, params, callback, connection) {
+    connection.query(sql, params, (err, res) => {
+        if (err)
+            console.error(err);
+        callback(res);
+    });
+}
+
+module.exports = {getColumns, getTableName, getConfiguration, getQueryResult, getDatabaseConnection};

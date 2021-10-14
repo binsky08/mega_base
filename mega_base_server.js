@@ -1,25 +1,13 @@
-const mariadb_callback = require('mariadb/callback');
-
 const express = require('express')
 const app = express()
 const databaseConnector = require('./databaseConnector')
+const friends = require('./friends')
 
 const Main_Identifier = 'id';
 
 let config = databaseConnector.getConfiguration();
-let databaseConfig = databaseConnector.getDatabaseConfig();
 
-const connection = mariadb_callback.createConnection({
-    host: databaseConfig.host,
-    ssl: databaseConfig.ssl,
-    port: databaseConfig.port,
-    user: databaseConfig.username,
-    password: databaseConfig.password,
-    database: databaseConfig.database
-});
-connection.connect(function (err) {
-    if (err) throw err;
-});
+const connection = databaseConnector.getDatabaseConnection();
 
 const failResponse = function (statusCode, message, response) {
     response.status(statusCode);
@@ -36,7 +24,7 @@ const fetchResource = function (resource, res) {
     let table = databaseConnector.getTableName(resource);
     let selectColumns = '*';
 
-    getQueryResult("SELECT " + selectColumns + " FROM " + table + ";", [], (data) => {
+    databaseConnector.getQueryResult("SELECT " + selectColumns + " FROM " + table + ";", [], (data) => {
         res.send(JSON.stringify(data));
         res.end();
     }, connection);
@@ -77,7 +65,7 @@ const updateContent = function (resource, res, data) {
     updateValues.push(idValue);
 
     if (updateColumns.length > 0) {
-        getQueryResult("UPDATE " + table + " " +
+        databaseConnector.getQueryResult("UPDATE " + table + " " +
             "SET " + updateColumns.join(', ') + " " +
             "WHERE id = ?;", updateValues, (data) => {
             if (data === undefined || data.affectedRows === 0) {
@@ -113,7 +101,7 @@ function createContent(resourceType, res, fields) {
     let insertPlaceHolders = Array(insetValues.length).fill('?');
     let sql = "INSERT INTO " + table + " (" + columns.join(',') + ")" +
         "VALUES (" + insertPlaceHolders.join(',') + ") "
-    getQueryResult(sql, insetValues, (data) => {
+    databaseConnector.getQueryResult(sql, insetValues, (data) => {
         if (data === undefined || data.affectedRows === 0) {
             failResponse(410, "No Dataset modified, maybe already deleted", res);
         } else {
@@ -139,7 +127,7 @@ function deleteContent(resourceType, response, data) {
 
     writeHead(response, 200, "application/json");
     let table = databaseConnector.getTableName(resourceType);
-    getQueryResult("DELETE FROM " + table + " " +
+    databaseConnector.getQueryResult("DELETE FROM " + table + " " +
         " WHERE id = ?;", [data[Main_Identifier]], (data) => {
         modificationResponse(data, response);
     }, connection);
@@ -162,42 +150,6 @@ app.delete('/data/:resourceType/', function (req, res) {
     deleteContent(req.params.resourceType, res, req.body);
 })
 
-function fetchFriendsIds(playerId, callback) {
-
-    const friendIds = [];
-
-    getQueryResult("SELECT source_player_id, destination_player_id FROM friends" +
-        " WHERE ? in (source_player_id, destination_player_id )" +
-        " ;", [playerId], (data) => {
-        for (let friend of data) {
-            if (parseInt(friend.source_player_id) !== parseInt(playerId)) {
-                friendIds.push(friend.source_player_id);
-            } else if (parseInt(friend.destination_player_id) !== parseInt(playerId)) {
-                friendIds.push(friend.destination_player_id);
-            }
-        }
-        callback(friendIds);
-    }, connection);
-}
-
-function addFriend(sourcePlayer, targetPlayer, callback) {
-
-    let sql = "INSERT INTO friends (source_player_id, destination_player_id) " +
-        "VALUES (?, ?) "
-    getQueryResult(sql, [sourcePlayer, targetPlayer], (data) => {
-        callback(data)
-    }, connection);
-}
-
-function removeFriend(sourcePlayer, targetPlayer, callback) {
-
-    let sql = "DELETE FROM friends WHERE (source_player_id = ? AND destination_player_id = ?) OR  (destination_player_id = ? AND source_player_id = ?) ";
-    getQueryResult(sql, [sourcePlayer, targetPlayer, sourcePlayer, targetPlayer], (data) => {
-        callback(data)
-    }, connection);
-}
-
-
 app.get('/data/friends/:playerId', function (req, res) {
     if (req.params === undefined || req.params.playerId === undefined) {
         failResponse(404, 'not found', res);
@@ -207,9 +159,9 @@ app.get('/data/friends/:playerId', function (req, res) {
     const playerId = req.params.playerId;
 
     writeHead(res, 200, "application/json");
-    fetchFriendsIds(playerId, (friendIds) => {
+    friends.fetchFriendsIds(playerId, (friendIds) => {
         modificationResponse(friendIds, res);
-    });
+    }, connection);
 });
 
 app.post('/data/friends/:playerId', function (req, res) {
@@ -222,13 +174,13 @@ app.post('/data/friends/:playerId', function (req, res) {
     const targetFriendId = req.body.destinationPlayerId;
 
     writeHead(res, 200, "application/json");
-    addFriend(playerId, targetFriendId, (data) => {
+    friends.addFriend(playerId, targetFriendId, (data) => {
         if (data === undefined || data.affectedRows === 0) {
             failResponse(410, "No Dataset modified, maybe already deleted", res);
         } else {
             modificationResponse(data, res);
         }
-    });
+    }, connection);
 });
 
 app.delete('/data/friends/:playerId', function (req, res) {
@@ -241,13 +193,13 @@ app.delete('/data/friends/:playerId', function (req, res) {
     const targetFriendId = req.body.destinationPlayerId;
 
     writeHead(res, 200, "application/json");
-    removeFriend(playerId, targetFriendId, (data) => {
+    friends.removeFriend(playerId, targetFriendId, (data) => {
         if (data === undefined || data.affectedRows === 0) {
             failResponse(410, "No Dataset modified, maybe already deleted", res);
         } else {
             modificationResponse(data, res);
         }
-    });
+    }, connection);
 });
 
 app.use(express.static(__dirname + '/public'));
@@ -257,12 +209,4 @@ app.listen(config.applicationPort);
 function writeHead(res, statusCode, contentType) {
     res.setHeader('Content-Type', contentType !== undefined ? contentType : 'text/plain');
     res.setHeader('Access-Control-Allow-Origin', '*');
-}
-
-function getQueryResult(sql, params, callback, connection) {
-    connection.query(sql, params, (err, res) => {
-        if (err)
-            console.error(err);
-        callback(res);
-    });
 }
