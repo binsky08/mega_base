@@ -40,6 +40,8 @@ function refreshList(type) {
                 editDiv.addEventListener('click', () => loadToEdit(type, listElement));
             } else if (type === 'player') {
                 editDiv.addEventListener('click', () => loadToEdit(type, listElement));
+            } else if (type === 'category') {
+                editDiv.addEventListener('click', () => loadToEdit(type, listElement));
             }
 
             const deleteButton = document.createElement("i");
@@ -220,6 +222,9 @@ function loadToEdit(type, listElement) {
         document.getElementById("edit_" + type + "_password").value = listElement.password_plain;
         document.getElementById("edit_" + type + "_date_of_birth").value = listElement.date_of_birth.slice(0, 10);
         document.getElementById("edit_" + type + "_button").addEventListener('click', () => editUser(listElement));
+    } else if (type === 'category') {
+        document.getElementById("edit_" + type + "_name").value = listElement.name;
+        document.getElementById("edit_" + type + "_button").addEventListener('click', () => editCategory(listElement));
     }
 }
 
@@ -236,6 +241,9 @@ function resetFields(modificationType, resourceType) {
         case 'game':
             document.getElementById(modificationType + "_" + resourceType + "_name").value = '';
             document.getElementById(modificationType + "_" + resourceType + "_date").value = '';
+            break;
+        case 'category':
+            document.getElementById(modificationType + "_" + resourceType + "_name").value = '';
             break;
         default:
             alert('type ' + resourceType + ' not supported');
@@ -258,6 +266,9 @@ function add(type) {
             obj.nickname = document.getElementById("add_" + type + "_nickname").value;
             obj.password_plain = document.getElementById("add_" + type + "_password").value;
             obj.date_of_birth = document.getElementById("add_" + type + "_date_of_birth").value;
+            break;
+        case 'category':
+            obj.name = document.getElementById("add_" + type + "_name").value;
             break;
     }
 
@@ -347,4 +358,32 @@ function editUser(playerListElement) {
                 alert(res.statusText);
             }
         })
+}
+
+function editCategory(categoryListElement) {
+    const editCategoryName = document.getElementById("edit_category_name");
+
+    const category = {
+        id: categoryListElement.id,
+        name: editCategoryName.value,
+    };
+
+    const options = {
+        method: 'PATCH',
+        body: JSON.stringify(category),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    fetch(prefix + '/category', options)
+        .then(function (res) {
+            if (res.status === 200) {
+                refreshList('category');
+                resetFields('edit', 'category');
+                document.getElementById("edit_category_group").classList.add('display-none');
+            } else {
+                alert(res.statusText);
+            }
+        });
 }

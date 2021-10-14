@@ -33,7 +33,9 @@ function getColumns(table, mainID) {
         case 'player':
             return [mainID, 'email', 'first_name', 'last_name', 'nickname', 'password_plain', 'date_of_birth'];
         case 'game':
-            return [mainID, 'name', 'release_date']
+            return [mainID, 'name', 'release_date'];
+        case 'category':
+            return [mainID, 'name'];
     }
 }
 
