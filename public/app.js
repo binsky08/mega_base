@@ -79,10 +79,6 @@ function refreshList(type) {
     });
 }
 
-refreshList('game');
-refreshList('player');
-refreshList('category');
-
 function addFriend(sourcePlayerId, destinationPlayerId, players) {
     let obj = {
         destinationPlayerId: destinationPlayerId
@@ -199,12 +195,6 @@ function loadPlayerSelection() {
     });
 }
 
-loadPlayerSelection();
-
-document.getElementById("add_game_button").addEventListener("click", () => add('game'));
-document.getElementById("add_player_button").addEventListener("click", () => add('player'));
-document.getElementById("add_category_button").addEventListener("click", () => add('category'));
-
 function loadToEdit(type, listElement) {
     const clone = document.getElementById("edit_" + type + "_button").cloneNode(true);
     document.getElementById("edit_" + type + "_button").replaceWith(clone);
@@ -284,16 +274,7 @@ function add(type) {
         .then(function (res) {
             if (res.status === 200) {
                 refreshList(type);
-
-                switch (type) {
-                    case 'game':
-                        document.getElementById("add_" + type + "_name").value = '';
-                        document.getElementById("add_" + type + "_date").value = '';
-                        break;
-                    case 'player':
-                        resetFields('add', type);
-                        break;
-                }
+                resetFields('add', type);
             } else {
                 alert(res.statusText);
             }
@@ -387,3 +368,16 @@ function editCategory(categoryListElement) {
             }
         });
 }
+
+
+// Initialization section
+
+refreshList('game');
+refreshList('player');
+refreshList('category');
+
+loadPlayerSelection();
+
+document.getElementById("add_game_button").addEventListener("click", () => add('game'));
+document.getElementById("add_player_button").addEventListener("click", () => add('player'));
+document.getElementById("add_category_button").addEventListener("click", () => add('category'));
