@@ -2,9 +2,8 @@
   "name": "mega_base_project",
   "version": "1.0.0",
   "description": "",
-  "main": "mega_base_cli_demo.js",
+  "main": "node mega_base_server.js",
   "scripts": {
-    "demo": "node mega_base_cli_demo.js",
     "server": "node mega_base_server.js"
   },
   "keywords": [],
